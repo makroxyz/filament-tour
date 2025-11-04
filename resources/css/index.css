@@ -1,10 +1,48 @@
-@import '../../vendor/filament/filament/resources/css/theme.css';
-@import "driver.js/dist/driver.css";
+@import 'driver.js/dist/driver.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind screens;
+@utility dark {
+  & .driver-popover-arrow {
+    border: 5px solid rgb(var(--gray-900)) !important;
+    border-right-color: #0000 !important;
+    border-bottom-color: #0000 !important;
+    border-top-color: #0000 !important;
+  }
+
+  & .driver-popover {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 10px #0006;
+    z-index: 1000000000;
+    position: fixed;
+    top: 0;
+    right: 0;
+  }
+}
+
+@utility driver-popover-arrow {
+  .dark & {
+    border: 5px solid rgb(var(--gray-900)) !important;
+    border-right-color: #0000 !important;
+    border-bottom-color: #0000 !important;
+    border-top-color: #0000 !important;
+  }
+}
+
+@utility driver-popover {
+  .dark & {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 10px #0006;
+    z-index: 1000000000;
+    position: fixed;
+    top: 0;
+    right: 0;
+  }
+}
 
 .hidden {
     display: none !important;
@@ -23,9 +61,9 @@
     left: 0;
     z-index: 10000;
     transition: width .3s, height .3s, left .1s, top .1s;
-    -webkit-box-shadow: 0px 0px 5px 0px rgb(var(--gray-950));
-    -moz-box-shadow: 0px 0px 5px 0px rgb(var(--gray-950));
-    box-shadow: 0px 0px 5px 0px rgb(var(--gray-950));
+    -webkit-box-shadow: 0 0 5px 0 rgb(var(--gray-950));
+    -moz-box-shadow: 0 0 5px 0 rgb(var(--gray-950));
+    box-shadow: 0 0 5px 0 rgb(var(--gray-950));
 }
 
 .driver-popover {
@@ -67,27 +105,4 @@
 .bottom-left {
     bottom: -14px;
     left: -16px;
-}
-
-@layer utilities {
-
-    .dark .driver-popover-arrow {
-        border: 5px solid rgb(var(--gray-900)) !important;
-        border-right-color: #0000 !important;
-        border-bottom-color: #0000 !important;
-        border-top-color: #0000 !important;
-    }
-
-    .dark .driver-popover {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 15px;
-        border-radius: 5px;
-        box-shadow: 0 1px 10px #0006;
-        z-index: 1000000000;
-        position: fixed;
-        top: 0;
-        right: 0;
-    }
-
 }
