@@ -2,8 +2,8 @@
 
 namespace JibayMcs\FilamentTour\Livewire;
 
-use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Illuminate\Contracts\View\View;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
 use JibayMcs\FilamentTour\Highlight\HasHighlight;
 use JibayMcs\FilamentTour\Tour\HasTour;
@@ -19,15 +19,19 @@ class FilamentTourWidget extends Component
     #[On('filament-tour::load-elements')]
     public function load(): void
     {
+        if (! empty(filament()->getCurrentPanel()?->getAuthMiddleware()) && filament()->auth()->guest()) {
+            return;
+        }
+
         $classesUsingHasTour = [];
         $classesUsingHasHighlight = [];
         $filamentClasses = [];
 
-        foreach (array_merge(Filament::getResources(), Filament::getPages()) as $class) {
+        foreach (array_merge(filament()->getResources(), filament()->getPages()) as $class) {
             $instance = new $class;
 
             if ($instance instanceof Resource) {
-                collect($instance->getPages())->map(fn ($item) => $item->getPage())
+                collect($instance::getPages())->map(fn ($item) => $item->getPage())
                     ->flatten()
                     ->each(function ($item) use (&$filamentClasses) {
                         $filamentClasses[] = $item;
@@ -59,18 +63,22 @@ class FilamentTourWidget extends Component
         }
 
         $this->dispatch('filament-tour::loaded-elements',
-            only_visible_once: FilamentTourPlugin::get()->getHistoryType() == 'local_storage' && (is_bool(FilamentTourPlugin::get()->isOnlyVisibleOnce()) ? FilamentTourPlugin::get()->isOnlyVisibleOnce() : config('filament-tour.only_visible_once')),
+            only_visible_once: FilamentTourPlugin::get()->getHistoryType() === 'local_storage' && (is_bool(FilamentTourPlugin::get()->isOnlyVisibleOnce())
+                ? FilamentTourPlugin::get()->isOnlyVisibleOnce()
+                : config('filament-tour.only_visible_once')),
             tours: $this->tours,
             highlights: $this->highlights,
         );
 
-        if (config('app.env') != 'production') {
-            $hasCssSelector = is_bool(FilamentTourPlugin::get()->isCssSelectorEnabled()) ? FilamentTourPlugin::get()->isCssSelectorEnabled() : config('filament-tour.enable_css_selector');
+        if (! app()->isProduction()) {
+            $hasCssSelector = is_bool(FilamentTourPlugin::get()->isCssSelectorEnabled())
+                ? FilamentTourPlugin::get()->isCssSelectorEnabled()
+                : config('filament-tour.enable_css_selector');
             $this->dispatch('filament-tour::change-css-selector-status', enabled: $hasCssSelector);
         }
     }
 
-    public function render()
+    public function render(): View
     {
         return view('filament-tour::livewire.filament-tour-widget');
     }
