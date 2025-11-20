@@ -49,6 +49,10 @@ class Step
             $app->dispatchOnNext($step['events']['dispatchOnNext'][0], ...$step['events']['dispatchOnNext'][1]);
         }
 
+        if ($step['events']['dispatchOnPrev']) {
+            $app->dispatchOnPrev($step['events']['dispatchOnPrev'][0], ...$step['events']['dispatchOnPrev'][1]);
+        }
+
         if ($step['events']['notifyOnNext']) {
             $app->notifyOnNext(
                 Notification::make(uniqid())
@@ -63,8 +67,26 @@ class Step
             );
         }
 
+        if ($step['events']['notifyOnPrev']) {
+            $app->notifyOnPrev(
+                Notification::make(uniqid())
+                    ->title($step['events']['notifyOnPrev']['title'])
+                    ->body($step['events']['notifyOnPrev']['body'] ?? null)
+                    ->color($step['events']['notifyOnPrev']['color'] ?? null)
+                    ->icon($step['events']['notifyOnPrev']['icon'] ?? null)
+                    ->iconColor($step['events']['notifyOnPrev']['iconColor'] ?? null)
+                    ->iconSize($step['events']['notifyOnPrev']['iconSize'] ?? null)
+                    ->actions($step['events']['notifyOnPrev']['actions'] ?? [])
+                    ->duration($step['events']['notifyOnPrev']['duration'] ?? 6000)
+            );
+        }
+
         if ($step['events']['clickOnNext']) {
             $app->clickOnNext($step['events']['clickOnNext']);
+        }
+
+        if ($step['events']['clickOnPrev']) {
+            $app->clickOnPrev($step['events']['clickOnPrev']);
         }
 
         if ($step['events']['redirectOnNext']) {
@@ -72,6 +94,14 @@ class Step
                 $app->redirectOnNext($step['events']['redirectOnNext']['url'], isset($step['events']['redirectOnNext']['newTab']) ? $step['events']['redirectOnNext']['newTab'] : true);
             } else {
                 $app->redirectOnNext($step['events']['redirectOnNext']);
+            }
+        }
+
+        if ($step['events']['redirectOnPrev']) {
+            if (is_array($step['events']['redirectOnPrev'])) {
+                $app->redirectOnPrev($step['events']['redirectOnPrev']['url'], isset($step['events']['redirectOnPrev']['newTab']) ? $step['events']['redirectOnPrev']['newTab'] : true);
+            } else {
+                $app->redirectOnPrev($step['events']['redirectOnPrev']);
             }
         }
 

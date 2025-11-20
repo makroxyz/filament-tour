@@ -1,7 +1,7 @@
 import {driver} from "driver.js";
 import {initCssSelector} from './css-selector.js';
 
-document.addEventListener('livewire:initialized', async function () {
+async function handleEvent() {
 
     initCssSelector();
 
@@ -225,6 +225,57 @@ document.addEventListener('livewire:initialized', async function () {
 
                     driverObj.moveNext();
                 }),
+
+                onPrevClick: ((element, step, {config, state}) => {
+                    if (tours.length > 1 && driverObj.isFirstStep()) {
+                        let index = tours.findIndex(objet => objet.id === tour.id);
+
+                        if (index !== -1 && index > 0) {
+                            let prevTourIndex = index - 1;
+                            selectTour(tours, prevTourIndex);
+                        }
+                    }
+
+
+                    // if (driverObj.isFirstStep()) {
+                    //
+                    //     // if (!localStorage.getItem('tours').includes(tour.id)) {
+                    //     //     localStorage.setItem('tours', JSON.stringify([...JSON.parse(localStorage.getItem('tours')), tour.id]));
+                    //     // }
+                    //
+                    //     driverObj.destroy();
+                    // }
+
+
+                    if (step.events) {
+                        if (step.events.notifyOnNext) {
+                            new FilamentNotification()
+                                .title(step.events.notifyOnNext.title)
+                                .body(step.events.notifyOnNext.body)
+                                .icon(step.events.notifyOnNext.icon)
+                                .iconColor(step.events.notifyOnNext.iconColor)
+                                .color(step.events.notifyOnNext.color)
+                                .duration(step.events.notifyOnNext.duration)
+                                .send();
+                        }
+
+                        if (step.events.dispatchOnPrev) {
+                            Livewire.dispatch(step.events.dispatchOnPrev.name, step.events.dispatchOnPrev.params);
+                        }
+
+                        if (step.events.clickOnPrev) {
+                            document.querySelector(step.events.clickOnPrev).click();
+                        }
+
+                        if (step.events.redirectOnPrev) {
+                            window.open(step.events.redirectOnPrev.url, step.events.redirectOnPrev.newTab ? '_blank' : '_self');
+                        }
+                    }
+
+
+                    driverObj.movePrevious();
+                }),
+
                 onPopoverRender: (popover, {config, state}) => {
 
                     if (state.activeStep.uncloseable || tour.uncloseable)
@@ -276,4 +327,6 @@ document.addEventListener('livewire:initialized', async function () {
             driverObj.drive();
         }
     }
-});
+}
+
+document.addEventListener('livewire:navigated', handleEvent);
