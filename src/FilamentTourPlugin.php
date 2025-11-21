@@ -6,11 +6,14 @@ use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 
 class FilamentTourPlugin implements Plugin
 {
     use EvaluatesClosures;
+
+    public Closure | bool $enabled = false;
 
     private ?bool $onlyVisibleOnce = null;
 
@@ -38,7 +41,9 @@ class FilamentTourPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->renderHook('panels::body.start', fn () => Blade::render('<livewire:filament-tour-widget/>'));
+        if ($this->getEnabled()) {
+            $panel->renderHook(PanelsRenderHook::BODY_START, fn () => Blade::render('<livewire:filament-tour-widget/>'));
+        }
     }
 
     public function boot(Panel $panel): void {}
@@ -82,5 +87,17 @@ class FilamentTourPlugin implements Plugin
     public function getHistoryType(): string
     {
         return $this->historyType;
+    }
+
+    public function enabled(Closure | bool $value = true): static
+    {
+        $this->enabled = $value;
+
+        return $this;
+    }
+
+    public function getEnabled(): bool
+    {
+        return $this->evaluate($this->enabled);
     }
 }
