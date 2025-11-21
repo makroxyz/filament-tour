@@ -163,9 +163,19 @@
 .driver-popover-arrow {
     content: "";
     position: absolute;
-    /*border: 5px solid #fff*/
-    @apply border-white dark:border-gray-800;
+    /* Use the border-triangle technique */
+    width: 0;
+    height: 0;
+    /* Set the triangle size via border width */
+    border-width: 8px;
+    /* Solid borders so the colored side forms the triangle */
+    /* Use explicit CSS to avoid relying on @apply in package CSS */
+    border-style: solid;
+    /* Light mode arrow color */
+    border-color: #ffffff;
 }
+
+/* Removed broad .dark border-color rule to prevent overriding transparent sides */
 
 .driver-popover-arrow-side-over {
     display: none
@@ -197,6 +207,23 @@
     border-left-color: transparent;
     border-top-color: transparent;
     border-right-color: transparent
+}
+
+/* Dark mode: color only the visible border on each orientation */
+.dark .driver-popover-arrow-side-top {
+    border-top-color: #111827; /* gray-900 */
+}
+
+.dark .driver-popover-arrow-side-bottom {
+    border-bottom-color: #111827; /* gray-900 */
+}
+
+.dark .driver-popover-arrow-side-left {
+    border-left-color: #111827; /* gray-900 */
+}
+
+.dark .driver-popover-arrow-side-right {
+    border-right-color: #111827; /* gray-900 */
 }
 
 .driver-popover-arrow-side-center {
